@@ -1,39 +1,10 @@
+import { Suspense } from "react";
 import { Navbar } from "@/components/navbar";
+import {
+  FeaturedProducts,
+  FeaturedProductsSkeleton,
+} from "@/components/featured-products";
 import Link from "next/link";
-
-type Product = {
-  name: string;
-  category: string;
-  price: string;
-  description: string;
-};
-
-const featuredProducts: Product[] = [
-  {
-    name: "Travel Stroller",
-    category: "Strollers",
-    price: "$12/day",
-    description: "Lightweight, foldable, and ready for city walks.",
-  },
-  {
-    name: "Infant Car Seat",
-    category: "Car Seats",
-    price: "$10/day",
-    description: "Clean, safety-checked seating for airport pickups.",
-  },
-  {
-    name: "Portable Crib",
-    category: "Sleep",
-    price: "$14/day",
-    description: "A compact sleep setup for hotels and family visits.",
-  },
-  {
-    name: "Baby Carrier",
-    category: "On the Go",
-    price: "$8/day",
-    description: "Comfortable hands-free support for long travel days.",
-  },
-];
 
 function Hero() {
   return (
@@ -81,63 +52,15 @@ function Hero() {
   );
 }
 
-function ProductCard({ product }: { product: Product }) {
-  return (
-    <article className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-1 hover:shadow-lg">
-      <div className="mb-5 flex aspect-[4/3] items-end rounded-xl bg-slate-100 p-4">
-        <div className="h-16 w-full rounded-lg bg-gradient-to-r from-teal-700 via-rose-300 to-amber-300" />
-      </div>
-      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-teal-700">
-        {product.category}
-      </p>
-      <div className="mt-2 flex items-start justify-between gap-4">
-        <h3 className="text-xl font-bold text-slate-950">{product.name}</h3>
-        <p className="shrink-0 text-sm font-semibold text-slate-700">
-          {product.price}
-        </p>
-      </div>
-      <p className="mt-3 flex-1 text-sm leading-6 text-slate-600">
-        {product.description}
-      </p>
-    </article>
-  );
-}
-
-function FeaturedProducts() {
-  return (
-    <section className="bg-white px-6 py-16 sm:py-20">
-      <div className="mx-auto w-full max-w-6xl">
-        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-teal-800">
-              Featured rentals
-            </p>
-            <h2 className="mt-2 text-3xl font-bold text-slate-950">
-              Popular baby gear
-            </h2>
-          </div>
-          <p className="max-w-md text-sm leading-6 text-slate-600">
-            Essentials families book most often for weekends, holidays, and
-            visiting relatives.
-          </p>
-        </div>
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {featuredProducts.map((product) => (
-            <ProductCard key={product.name} product={product} />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 export default function Home() {
   return (
     <div className="min-h-screen bg-white text-slate-950">
       <Navbar />
       <main>
         <Hero />
-        <FeaturedProducts />
+        <Suspense fallback={<FeaturedProductsSkeleton />}>
+          <FeaturedProducts />
+        </Suspense>
       </main>
     </div>
   );
