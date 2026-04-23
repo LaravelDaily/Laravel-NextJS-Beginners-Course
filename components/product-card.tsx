@@ -1,15 +1,5 @@
 import Image from "next/image";
-
-export type Product = {
-  name: string;
-  slug: string;
-  description: string;
-  image_url: string;
-  daily_rate: number;
-  category: string;
-  is_active: boolean;
-  units_count: number;
-};
+import type { Product } from "@/types/products";
 
 function formatCategory(category: string) {
   return category

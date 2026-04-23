@@ -11,6 +11,12 @@ export function Navbar() {
           BABYGEAR
         </Link>
         <div className="flex items-center gap-5 text-sm font-medium text-slate-700">
+          <Link
+            href="/products"
+            className="transition-colors hover:text-slate-950"
+          >
+            Products
+          </Link>
           <Link href="/login" className="transition-colors hover:text-slate-950">
             Login
           </Link>

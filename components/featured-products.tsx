@@ -1,34 +1,5 @@
-import { ProductCard, type Product } from "@/components/product-card";
-
-type ProductApiResponse = {
-  data: Product[];
-};
-
-async function getFeaturedProducts() {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
-  if (!apiUrl) {
-    throw new Error("NEXT_PUBLIC_API_URL is not configured.");
-  }
-
-  const productsUrl = new URL("/api/products", apiUrl);
-  productsUrl.searchParams.set("per_page", "4");
-
-  const response = await fetch(productsUrl, {
-    headers: {
-      Accept: "application/json",
-    },
-    cache: "no-store",
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch featured products: ${response.status}`);
-  }
-
-  const payload = (await response.json()) as ProductApiResponse;
-
-  return payload.data;
-}
+import { ProductCard } from "@/components/product-card";
+import { getFeaturedProducts } from "@/lib/products";
 
 function FeaturedProductsHeader() {
   return (
