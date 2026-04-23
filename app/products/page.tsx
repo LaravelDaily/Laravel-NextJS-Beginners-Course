@@ -40,7 +40,7 @@ async function ProductsGrid({
   page: number;
   category?: string;
 }) {
-  const payload = await getProducts(page);
+  const payload = await getProducts(page, category);
   const products = payload.data;
   const meta = payload.meta;
 

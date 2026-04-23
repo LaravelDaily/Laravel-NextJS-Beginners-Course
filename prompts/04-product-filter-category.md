@@ -1,0 +1,1 @@
+In app/products/page.tsx implement actually working filters for categories in components/category-filters.tsx using API request with endpoint /products?category=xxxxx where xxxxx is category slug

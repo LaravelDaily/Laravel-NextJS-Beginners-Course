@@ -1,14 +1,21 @@
 import Link from "next/link";
 
 const categories = [
+  { label: "All", slug: undefined },
   { label: "Strollers", slug: "strollers" },
   { label: "Car Seats", slug: "car_seats" },
   { label: "Cribs", slug: "cribs" },
   { label: "High Chairs", slug: "high_chairs" },
 ];
 
-function getCategoryHref(slug: string) {
-  return `/products?category=${slug}`;
+function getCategoryHref(slug?: string) {
+  if (!slug) {
+    return "/products";
+  }
+
+  const searchParams = new URLSearchParams({ category: slug });
+
+  return `/products?${searchParams}`;
 }
 
 export function CategoryFilters({
@@ -23,8 +30,9 @@ export function CategoryFilters({
 
         return (
           <Link
-            key={category.slug}
+            key={category.slug ?? "all"}
             href={getCategoryHref(category.slug)}
+            aria-current={isSelected ? "page" : undefined}
             className={
               isSelected
                 ? "inline-flex h-10 items-center rounded-full bg-teal-700 px-4 text-sm font-semibold text-white"

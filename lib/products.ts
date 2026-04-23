@@ -3,9 +3,11 @@ import type { ProductsApiResponse } from "@/types/products";
 function getProductsUrl({
   page,
   perPage,
+  category,
 }: {
   page?: number;
   perPage?: number;
+  category?: string;
 }) {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -21,6 +23,10 @@ function getProductsUrl({
 
   if (perPage) {
     productsUrl.searchParams.set("per_page", String(perPage));
+  }
+
+  if (category) {
+    productsUrl.searchParams.set("category", category);
   }
 
   return productsUrl;
@@ -41,9 +47,9 @@ async function fetchProducts(url: URL, errorMessage: string) {
   return (await response.json()) as ProductsApiResponse;
 }
 
-export async function getProducts(page: number) {
+export async function getProducts(page: number, category?: string) {
   return fetchProducts(
-    getProductsUrl({ page }),
+    getProductsUrl({ page, category }),
     "Failed to fetch products",
   );
 }
