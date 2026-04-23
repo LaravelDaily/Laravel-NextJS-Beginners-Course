@@ -31,10 +31,10 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <Link
       href={`/products/${product.slug}`}
-      className="group block h-full rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 focus-visible:ring-offset-2"
+      className="product-card group block h-full rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 focus-visible:ring-offset-2"
     >
-      <article className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 transition group-hover:-translate-y-1 group-hover:shadow-lg">
-        <div className="relative mb-5 aspect-[4/3] overflow-hidden rounded-xl bg-slate-100">
+      <article className="product-card__surface flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 transition group-hover:-translate-y-1 group-hover:shadow-lg">
+        <div className="product-card__image relative mb-5 aspect-[4/3] overflow-hidden rounded-xl bg-slate-100">
           <Image
             src={product.image_url}
             alt={product.name}
@@ -44,21 +44,23 @@ export function ProductCard({ product }: { product: Product }) {
             unoptimized
           />
         </div>
-        <div className="flex items-center justify-between gap-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-teal-700">
+        <div className="product-card__meta flex items-center justify-between gap-3">
+          <p className="product-card__category text-xs font-semibold uppercase tracking-[0.18em] text-teal-700">
             {formatCategory(product.category)}
           </p>
-          <p className="shrink-0 text-xs font-semibold text-slate-500">
+          <p className="product-card__availability shrink-0 text-xs font-semibold text-slate-500">
             {availability}
           </p>
         </div>
-        <div className="mt-2 flex items-start justify-between gap-4">
-          <h3 className="text-xl font-bold text-slate-950">{product.name}</h3>
-          <p className="shrink-0 text-sm font-semibold text-slate-700">
+        <div className="product-card__header mt-2 flex items-start justify-between gap-4">
+          <h3 className="product-card__title text-xl font-bold text-slate-950">
+            {product.name}
+          </h3>
+          <p className="product-card__price shrink-0 text-sm font-semibold text-slate-700">
             {formatDailyRate(product.daily_rate)}/day
           </p>
         </div>
-        <p className="mt-3 flex-1 text-sm leading-6 text-slate-600">
+        <p className="product-card__summary mt-3 flex-1 text-sm leading-6 text-slate-600">
           {getSummary(product.description)}
         </p>
       </article>

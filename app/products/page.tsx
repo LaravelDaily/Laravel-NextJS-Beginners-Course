@@ -3,6 +3,7 @@ import { CategoryFilters } from "@/components/category-filters";
 import { Navbar } from "@/components/navbar";
 import { Pagination } from "@/components/pagination";
 import { ProductCard } from "@/components/product-card";
+import { ProductsViewToggle } from "@/components/products-view-toggle";
 import { getProducts } from "@/lib/products";
 
 type SearchParams = Promise<{
@@ -22,13 +23,18 @@ function getPageParam(value: string | string[] | undefined) {
 
 function ProductsGridSkeleton() {
   return (
-    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-      {Array.from({ length: 6 }).map((_, index) => (
-        <div
-          key={index}
-          className="h-96 rounded-2xl border border-slate-200 bg-white"
-        />
-      ))}
+    <div>
+      <div className="mb-5 flex items-center justify-end">
+        <div className="h-11 w-32 rounded-full border border-slate-200 bg-white" />
+      </div>
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <div
+            key={index}
+            className="h-96 rounded-2xl border border-slate-200 bg-white"
+          />
+        ))}
+      </div>
     </div>
   );
 }
@@ -53,13 +59,13 @@ async function ProductsGrid({
   }
 
   return (
-    <>
+    <ProductsViewToggle>
       {meta ? (
         <p className="mb-5 text-sm font-medium text-slate-600">
           Showing {meta.from ?? 0}-{meta.to ?? 0} of {meta.total} products
         </p>
       ) : null}
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="products-collection grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {products.map((product) => (
           <ProductCard key={product.slug} product={product} />
         ))}
@@ -67,7 +73,7 @@ async function ProductsGrid({
       {meta && meta.links.length > 1 ? (
         <Pagination links={meta.links} category={category} />
       ) : null}
-    </>
+    </ProductsViewToggle>
   );
 }
 
