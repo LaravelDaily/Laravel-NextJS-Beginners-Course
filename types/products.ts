@@ -26,3 +26,7 @@ export type ProductsApiResponse = {
     total: number;
   };
 };
+
+export type ProductApiResponse = {
+  data: Product;
+};
