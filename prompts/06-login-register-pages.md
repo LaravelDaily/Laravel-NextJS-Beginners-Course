@@ -1,0 +1,1 @@
+Create front-end pages for /login and /register so that links on top would work and not show 404. Use the same layout with the same navbar menu items. Later these pages will connect with Laravel API, but for now implement just front-end pages in Next.js/React, with route group of (auth).
