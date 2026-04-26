@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Navbar } from "@/components/navbar";
+import { RentThisButton } from "@/components/rent-this-button";
 import { getProduct } from "@/lib/products";
 
 type ProductPageParams = Promise<{
@@ -96,6 +97,9 @@ export default async function ProductPage({
                     </span>
                   </div>
                 </div>
+                {product.is_active && product.units_count > 0 ? (
+                  <RentThisButton slug={product.slug} />
+                ) : null}
               </aside>
             </div>
           </div>

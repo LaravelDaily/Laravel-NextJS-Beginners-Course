@@ -79,6 +79,12 @@ export function AuthNav() {
   if (user) {
     return (
       <div className="flex items-center gap-4">
+        <Link
+          href="/bookings"
+          className="transition-colors hover:text-slate-950"
+        >
+          My bookings
+        </Link>
         <span className="max-w-36 truncate font-semibold text-slate-950">
           {user.name}
         </span>

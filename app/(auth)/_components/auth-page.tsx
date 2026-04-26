@@ -48,6 +48,19 @@ function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  function getRedirectPath() {
+    if (typeof window === "undefined") {
+      return "/";
+    }
+
+    const redirect = new URLSearchParams(window.location.search).get(
+      "redirect",
+    );
+
+    return redirect?.startsWith("/") ? redirect : "/";
+  }
+
+
   async function handleSubmit(
     event: SyntheticEvent<HTMLFormElement, SubmitEvent>,
   ) {
@@ -64,7 +77,7 @@ function LoginForm() {
       });
 
       storeAuthToken(payload.token);
-      router.push("/");
+      router.push(getRedirectPath());
       router.refresh();
     } catch (error) {
       setError(
