@@ -1,4 +1,10 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import type { SyntheticEvent } from "react";
+import { login, register, storeAuthToken } from "@/lib/auth";
 
 type AuthPageProps = {
   mode: "login" | "register";
@@ -13,12 +19,14 @@ function TextField({
   type = "text",
   autoComplete,
   placeholder,
+  required = true,
 }: {
   label: string;
   name: string;
   type?: string;
   autoComplete?: string;
   placeholder: string;
+  required?: boolean;
 }) {
   return (
     <label className="block">
@@ -29,14 +37,46 @@ function TextField({
         type={type}
         autoComplete={autoComplete}
         placeholder={placeholder}
+        required={required}
       />
     </label>
   );
 }
 
 function LoginForm() {
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  async function handleSubmit(
+    event: SyntheticEvent<HTMLFormElement, SubmitEvent>,
+  ) {
+    event.preventDefault();
+    setError(null);
+    setIsSubmitting(true);
+
+    const formData = new FormData(event.currentTarget);
+
+    try {
+      const payload = await login({
+        email: String(formData.get("email") ?? ""),
+        password: String(formData.get("password") ?? ""),
+      });
+
+      storeAuthToken(payload.token);
+      router.push("/");
+      router.refresh();
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "Unable to sign in.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
-    <form className="mt-8 space-y-5">
+    <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
       <TextField
         label="Email address"
         name="email"
@@ -66,32 +106,66 @@ function LoginForm() {
       </div>
       <button
         type="submit"
+        disabled={isSubmitting}
         className="flex h-12 w-full items-center justify-center rounded-full bg-slate-950 px-6 text-sm font-semibold text-white transition-colors hover:bg-teal-800"
       >
-        Sign in
+        {isSubmitting ? "Signing in..." : "Sign in"}
       </button>
+      {error ? (
+        <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          {error}
+        </p>
+      ) : null}
     </form>
   );
 }
 
 function RegisterForm() {
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  async function handleSubmit(
+    event: SyntheticEvent<HTMLFormElement, SubmitEvent>,
+  ) {
+    event.preventDefault();
+    setError(null);
+    setIsSubmitting(true);
+
+    const formData = new FormData(event.currentTarget);
+
+    try {
+      const payload = await register({
+        name: String(formData.get("name") ?? ""),
+        email: String(formData.get("email") ?? ""),
+        password: String(formData.get("password") ?? ""),
+        password_confirmation: String(
+          formData.get("password_confirmation") ?? "",
+        ),
+      });
+
+      storeAuthToken(payload.token);
+      router.push("/");
+      router.refresh();
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Unable to create your account.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
-    <form className="mt-8 space-y-5">
-      <div className="grid gap-5 sm:grid-cols-2">
-        <TextField
-          label="Full name"
-          name="name"
-          autoComplete="name"
-          placeholder="Alex Morgan"
-        />
-        <TextField
-          label="Phone"
-          name="phone"
-          type="tel"
-          autoComplete="tel"
-          placeholder="(555) 123-4567"
-        />
-      </div>
+    <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+      <TextField
+        label="Full name"
+        name="name"
+        autoComplete="name"
+        placeholder="Alex Morgan"
+      />
       <TextField
         label="Email address"
         name="email"
@@ -126,10 +200,16 @@ function RegisterForm() {
       </label>
       <button
         type="submit"
+        disabled={isSubmitting}
         className="flex h-12 w-full items-center justify-center rounded-full bg-slate-950 px-6 text-sm font-semibold text-white transition-colors hover:bg-teal-800"
       >
-        Create account
+        {isSubmitting ? "Creating account..." : "Create account"}
       </button>
+      {error ? (
+        <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          {error}
+        </p>
+      ) : null}
     </form>
   );
 }

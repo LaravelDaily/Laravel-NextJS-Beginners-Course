@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AuthNav } from "@/components/auth-nav";
 
 export function Navbar() {
   return (
@@ -17,15 +18,7 @@ export function Navbar() {
           >
             Products
           </Link>
-          <Link href="/login" className="transition-colors hover:text-slate-950">
-            Login
-          </Link>
-          <Link
-            href="/register"
-            className="rounded-full bg-teal-700 px-4 py-2 text-white transition-colors hover:bg-teal-800"
-          >
-            Register
-          </Link>
+          <AuthNav />
         </div>
       </nav>
     </header>
