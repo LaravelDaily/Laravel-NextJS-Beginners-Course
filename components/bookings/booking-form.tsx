@@ -8,6 +8,8 @@ import {
   getCurrentUser,
   getStoredAuthToken,
 } from "@/lib/auth";
+import { FormError } from "@/components/ui/form-error";
+import { TextField } from "@/components/ui/text-field";
 import { createBooking } from "@/lib/bookings";
 import type { AuthUser } from "@/lib/auth";
 
@@ -15,42 +17,6 @@ type BookingFormProps = {
   productSlug: string;
   productName: string;
 };
-
-const fieldClassName =
-  "mt-2 h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-base text-slate-950 outline-none transition-colors placeholder:text-slate-400 focus:border-teal-700";
-
-function TextField({
-  label,
-  name,
-  type = "text",
-  autoComplete,
-  placeholder,
-  required = true,
-  defaultValue,
-}: {
-  label: string;
-  name: string;
-  type?: string;
-  autoComplete?: string;
-  placeholder: string;
-  required?: boolean;
-  defaultValue?: string;
-}) {
-  return (
-    <label className="block">
-      <span className="text-sm font-semibold text-slate-700">{label}</span>
-      <input
-        className={fieldClassName}
-        name={name}
-        type={type}
-        autoComplete={autoComplete}
-        placeholder={placeholder}
-        required={required}
-        defaultValue={defaultValue}
-      />
-    </label>
-  );
-}
 
 function getLoginRedirect(productSlug: string) {
   return `/login?redirect=${encodeURIComponent(
@@ -226,11 +192,7 @@ export function BookingForm({ productSlug, productName }: BookingFormProps) {
         {isSubmitting ? "Submitting..." : "Submit booking"}
       </button>
 
-      {error ? (
-        <p className="mt-5 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
-          {error}
-        </p>
-      ) : null}
+      {error ? <FormError className="mt-5">{error}</FormError> : null}
     </form>
   );
 }

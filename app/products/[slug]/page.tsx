@@ -3,27 +3,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { RentThisButton } from "@/components/rent-this-button";
+import { formatCategory, formatDailyRate } from "@/lib/format";
 import { getProduct } from "@/lib/products";
 
 type ProductPageParams = Promise<{
   slug: string;
 }>;
-
-function formatCategory(category: string) {
-  return category
-    .split("_")
-    .filter(Boolean)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-}
-
-function formatDailyRate(rate: number) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(rate);
-}
 
 function getDescriptionParagraphs(description: string) {
   return description.split("\n").filter(Boolean);

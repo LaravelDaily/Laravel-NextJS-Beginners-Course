@@ -1,0 +1,1 @@
+Looking at this whole project now and 8 git commits, are there any things that you would suggest to restructure/refactor, the repeating parts? For example, I saw API logic in a few lib files, or TextField defined also a few times separately, maybe something else? Please advise.

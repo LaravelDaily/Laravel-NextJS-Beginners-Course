@@ -9,28 +9,8 @@ import {
   getStoredAuthToken,
 } from "@/lib/auth";
 import { getBookings } from "@/lib/bookings";
+import { formatCurrency, formatDate } from "@/lib/format";
 import type { Booking, BookingItem } from "@/types/bookings";
-
-function formatDate(value: string) {
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(date);
-}
-
-function formatPrice(value: number) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(value);
-}
 
 function isBookingItem(value: unknown): value is BookingItem {
   return Boolean(value && typeof value === "object");
@@ -57,7 +37,9 @@ function formatItems(items: Booking["items"]) {
 
       const name = item.product_name ?? "Rental item";
       const subtotal =
-        typeof item.subtotal === "number" ? ` (${formatPrice(item.subtotal)})` : "";
+        typeof item.subtotal === "number"
+          ? ` (${formatCurrency(item.subtotal)})`
+          : "";
 
       return `${name}${subtotal}`;
     })
@@ -178,7 +160,7 @@ export function BookingsTable() {
                   {formatItems(booking.items)}
                 </td>
                 <td className="px-5 py-4 font-semibold text-slate-950">
-                  {formatPrice(booking.total_price)}
+                  {formatCurrency(booking.total_price)}
                 </td>
                 <td className="px-5 py-4 text-slate-700">
                   {booking.delivery_address}

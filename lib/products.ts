@@ -1,3 +1,4 @@
+import { apiFetch, apiRequest, getApiUrl, getErrorMessage } from "@/lib/api";
 import type {
   Product,
   ProductApiResponse,
@@ -13,13 +14,7 @@ function getProductsUrl({
   perPage?: number;
   category?: string;
 }) {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
-  if (!apiUrl) {
-    throw new Error("NEXT_PUBLIC_API_URL is not configured.");
-  }
-
-  const productsUrl = new URL("/api/products", apiUrl);
+  const productsUrl = getApiUrl("/api/products");
 
   if (page && page > 1) {
     productsUrl.searchParams.set("page", String(page));
@@ -37,49 +32,27 @@ function getProductsUrl({
 }
 
 function getProductUrl(slug: string) {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
-  if (!apiUrl) {
-    throw new Error("NEXT_PUBLIC_API_URL is not configured.");
-  }
-
-  return new URL(`/api/products/${encodeURIComponent(slug)}`, apiUrl);
+  return getApiUrl(`/api/products/${encodeURIComponent(slug)}`);
 }
 
 async function fetchProducts(url: URL, errorMessage: string) {
-  const response = await fetch(url, {
-    headers: {
-      Accept: "application/json",
-    },
-    cache: "no-store",
-  });
-
-  if (!response.ok) {
-    throw new Error(`${errorMessage}: ${response.status}`);
-  }
-
-  return (await response.json()) as ProductsApiResponse;
+  return apiFetch<ProductsApiResponse>(url, { cache: "no-store" }, errorMessage);
 }
 
 async function fetchProduct(url: URL, errorMessage: string) {
-  const response = await fetch(url, {
-    headers: {
-      Accept: "application/json",
-    },
-    cache: "no-store",
-  });
+  const { response, payload } = await apiRequest(url, { cache: "no-store" });
 
   if (response.status === 404) {
     return null;
   }
 
   if (!response.ok) {
-    throw new Error(`${errorMessage}: ${response.status}`);
+    throw new Error(getErrorMessage(payload, errorMessage));
   }
 
-  const payload = (await response.json()) as Product | ProductApiResponse;
+  const productPayload = payload as Product | ProductApiResponse;
 
-  return "data" in payload ? payload.data : payload;
+  return "data" in productPayload ? productPayload.data : productPayload;
 }
 
 export async function getProducts(page: number, category?: string) {

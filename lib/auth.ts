@@ -1,3 +1,5 @@
+import { apiFetch } from "@/lib/api";
+
 export type AuthUser = {
   id: number;
   name: string;
@@ -20,39 +22,6 @@ export const AUTH_TOKEN_KEY = "babygear_auth_token";
 
 const DEVICE_NAME = "nextjs-frontend";
 
-function getApiUrl(path: string) {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
-  if (!apiUrl) {
-    throw new Error("NEXT_PUBLIC_API_URL is not configured.");
-  }
-
-  return new URL(path, apiUrl);
-}
-
-function getErrorMessage(payload: unknown, fallback: string) {
-  if (
-    payload &&
-    typeof payload === "object" &&
-    "message" in payload &&
-    typeof payload.message === "string"
-  ) {
-    return payload.message;
-  }
-
-  return fallback;
-}
-
-async function parseJsonResponse(response: Response) {
-  const text = await response.text();
-
-  if (!text) {
-    return null;
-  }
-
-  return JSON.parse(text) as unknown;
-}
-
 export function getStoredAuthToken() {
   return window.localStorage.getItem(AUTH_TOKEN_KEY);
 }
@@ -66,25 +35,17 @@ export function clearAuthToken() {
 }
 
 export async function login(payload: { email: string; password: string }) {
-  const response = await fetch(getApiUrl("/api/login"), {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
+  return apiFetch<AuthResponse>(
+    "/api/login",
+    {
+      method: "POST",
+      json: {
+        ...payload,
+        device_name: DEVICE_NAME,
+      },
     },
-    body: JSON.stringify({
-      ...payload,
-      device_name: DEVICE_NAME,
-    }),
-  });
-
-  const responsePayload = await parseJsonResponse(response);
-
-  if (!response.ok) {
-    throw new Error(getErrorMessage(responsePayload, "Unable to sign in."));
-  }
-
-  return responsePayload as AuthResponse;
+    "Unable to sign in.",
+  );
 }
 
 export async function register(payload: {
@@ -93,59 +54,39 @@ export async function register(payload: {
   password: string;
   password_confirmation: string;
 }) {
-  const response = await fetch(getApiUrl("/api/register"), {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
+  return apiFetch<AuthResponse>(
+    "/api/register",
+    {
+      method: "POST",
+      json: {
+        ...payload,
+        device_name: DEVICE_NAME,
+      },
     },
-    body: JSON.stringify({
-      ...payload,
-      device_name: DEVICE_NAME,
-    }),
-  });
-
-  const responsePayload = await parseJsonResponse(response);
-
-  if (!response.ok) {
-    throw new Error(
-      getErrorMessage(responsePayload, "Unable to create your account."),
-    );
-  }
-
-  return responsePayload as AuthResponse;
+    "Unable to create your account.",
+  );
 }
 
 export async function getCurrentUser(token: string) {
-  const response = await fetch(getApiUrl("/api/user"), {
-    headers: {
-      Accept: "application/json",
-      Authorization: `Bearer ${token}`,
+  const response = await apiFetch<UserResponse>(
+    "/api/user",
+    {
+      token,
+      cache: "no-store",
     },
-    cache: "no-store",
-  });
+    "Unable to load user.",
+  );
 
-  const responsePayload = await parseJsonResponse(response);
-
-  if (!response.ok) {
-    throw new Error(getErrorMessage(responsePayload, "Unable to load user."));
-  }
-
-  return (responsePayload as UserResponse).data;
+  return response.data;
 }
 
 export async function logout(token: string) {
-  const response = await fetch(getApiUrl("/api/logout"), {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+  await apiFetch<unknown>(
+    "/api/logout",
+    {
+      method: "POST",
+      token,
     },
-  });
-
-  if (!response.ok && response.status !== 204) {
-    const responsePayload = await parseJsonResponse(response);
-    throw new Error(getErrorMessage(responsePayload, "Unable to log out."));
-  }
+    "Unable to log out.",
+  );
 }

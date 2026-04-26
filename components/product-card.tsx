@@ -1,22 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { formatCategory, formatDailyRate } from "@/lib/format";
 import type { Product } from "@/types/products";
-
-function formatCategory(category: string) {
-  return category
-    .split("_")
-    .filter(Boolean)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-}
-
-function formatDailyRate(rate: number) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(rate);
-}
 
 function getSummary(description: string) {
   return description.split("\n").find(Boolean) ?? description;

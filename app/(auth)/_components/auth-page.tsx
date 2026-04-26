@@ -4,44 +4,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { SyntheticEvent } from "react";
+import { FormError } from "@/components/ui/form-error";
+import { TextField } from "@/components/ui/text-field";
 import { login, register, storeAuthToken } from "@/lib/auth";
 
 type AuthPageProps = {
   mode: "login" | "register";
 };
-
-const fieldClassName =
-  "h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-base text-slate-950 outline-none transition-colors placeholder:text-slate-400 focus:border-teal-700";
-
-function TextField({
-  label,
-  name,
-  type = "text",
-  autoComplete,
-  placeholder,
-  required = true,
-}: {
-  label: string;
-  name: string;
-  type?: string;
-  autoComplete?: string;
-  placeholder: string;
-  required?: boolean;
-}) {
-  return (
-    <label className="block">
-      <span className="text-sm font-semibold text-slate-700">{label}</span>
-      <input
-        className={`${fieldClassName} mt-2`}
-        name={name}
-        type={type}
-        autoComplete={autoComplete}
-        placeholder={placeholder}
-        required={required}
-      />
-    </label>
-  );
-}
 
 function LoginForm() {
   const router = useRouter();
@@ -59,7 +28,6 @@ function LoginForm() {
 
     return redirect?.startsWith("/") ? redirect : "/";
   }
-
 
   async function handleSubmit(
     event: SyntheticEvent<HTMLFormElement, SubmitEvent>,
@@ -124,11 +92,7 @@ function LoginForm() {
       >
         {isSubmitting ? "Signing in..." : "Sign in"}
       </button>
-      {error ? (
-        <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
-          {error}
-        </p>
-      ) : null}
+      {error ? <FormError>{error}</FormError> : null}
     </form>
   );
 }
@@ -218,11 +182,7 @@ function RegisterForm() {
       >
         {isSubmitting ? "Creating account..." : "Create account"}
       </button>
-      {error ? (
-        <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
-          {error}
-        </p>
-      ) : null}
+      {error ? <FormError>{error}</FormError> : null}
     </form>
   );
 }
